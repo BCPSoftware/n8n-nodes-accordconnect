@@ -29,5 +29,8 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Trusted publishing: the npm CLI picks up the OIDC token minted by
+      # id-token: write above, so there is no NODE_AUTH_TOKEN to supply and
+      # provenance is generated automatically without --provenance.
       - name: Publish
         run: npm publish --access public
