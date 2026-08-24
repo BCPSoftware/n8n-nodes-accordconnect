@@ -1449,8 +1449,14 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 	//   {"errors":[{"errorType":"System","errorMsg":"Unlicensed GET API v1/agecodes"}]}
 	// This is not a validation problem, and telling the user to check their
 	// fields sends them looking for a fault that is not there.
+	// Deliberately NodeOperationError, not NodeApiError: NodeApiError replaces
+	// any custom message with a canned one whenever httpCode is a well-known
+	// status, and 422 is one of them - so the explanation below would never
+	// reach the user. NodeOperationError passes no code and keeps the message.
+	// It is also the more accurate class: nothing is wrong with the request,
+	// the module simply is not licensed.
 	if (status === 422 && isUnlicensedError(error)) {
-		throw new NodeApiError(this.getNode(), error, {
+		throw new NodeOperationError(this.getNode(), error as Error, {
 			message: `The ${resource} API is not licensed on this Accord instance`,
 			description: 'The request was valid, but this API module is not enabled for your Accord installation. Contact your Accord administrator to have it licensed, or choose a resource your instance supports.'
 		});
@@ -1509,10 +1515,11 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
  * string. Normalise both to a number.
  */
 function httpStatusOf(error: any): number | undefined {
-	const raw = error?.httpCode
+	const raw = error?.httpCode              // NodeApiError, as a string
 		?? error?.statusCode
-		?? error?.response?.status          // axios, via helpers.httpRequest
-		?? error?.response?.statusCode;
+		?? error?.response?.status           // bare axios error
+		?? error?.response?.statusCode
+		?? error?.cause?.response?.status;   // axios nested inside a NodeApiError
 	const code = typeof raw === 'string' ? Number.parseInt(raw, 10) : raw;
 	return Number.isFinite(code) ? (code as number) : undefined;
 }
@@ -1524,10 +1531,16 @@ function httpStatusOf(error: any): number | undefined {
  * "Unlicensed", e.g. "Unlicensed GET API v1/agecodes".
  */
 function isUnlicensedError(error: any): boolean {
-	const body = error?.response?.data   // axios, via helpers.httpRequest
+	// n8n-core wraps the axios failure in a NodeApiError before this node sees
+	// it, which keeps the original only as `cause`. The raw body therefore sits
+	// at cause.response.data in practice; the rest are fallbacks for the shapes
+	// helpers.request and a bare axios error would produce.
+	const body = error?.cause?.response?.data
+		?? error?.response?.data
 		?? error?.error
 		?? error?.response?.body
-		?? error?.cause?.error;
+		?? error?.cause?.error
+		?? error?.cause?.response?.body;
 	const parsed = typeof body === 'string' ? tryParseJson(body) : body;
 	const errors = parsed?.errors;
 	if (Array.isArray(errors)) {
