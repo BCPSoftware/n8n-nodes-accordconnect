@@ -279,7 +279,7 @@ export const brandGroupsListFields: INodeProperties[] = [
                         displayName: 'Operator',
                         name: 'operator',
                         type: 'options',
-                        default: '=',
+                        default: 'equal',
                         description: 'Comparison operator for filtering',
                         noDataExpression: true,
                         options: [
@@ -293,23 +293,23 @@ export const brandGroupsListFields: INodeProperties[] = [
                             },
                             {
                                 name: 'Equals (=)',
-                                value: '='
+                                value: 'equal'
                             },
                             {
                                 name: 'Greater Than (>)',
-                                value: '>'
+                                value: 'gt'
                             },
                             {
                                 name: 'Greater Than or Equal (>=)',
-                                value: '>='
+                                value: 'gte'
                             },
                             {
                                 name: 'Less Than (<)',
-                                value: '<'
+                                value: 'lt'
                             },
                             {
                                 name: 'Less Than or Equal (<=)',
-                                value: '<='
+                                value: 'lte'
                             },
                             {
                                 name: 'Matches',
@@ -317,7 +317,7 @@ export const brandGroupsListFields: INodeProperties[] = [
                             },
                             {
                                 name: 'Not Equals (<>)',
-                                value: '<>'
+                                value: 'notEqual'
                             }
                         ]
                     },

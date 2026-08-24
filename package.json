@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-accordconnect",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "n8n community node for Accord Connect ERP system integration with API operations and webhook support",
   "keywords": [
     "n8n-community-node-package",

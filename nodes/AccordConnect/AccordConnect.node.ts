@@ -907,12 +907,11 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 							isEqualsOperator: filter.operator === '='
 						});
 						if (filter.field) {
-							// Handle empty operator - default to equals
-							if (!filter.operator || filter.operator === '') {
-								filter.operator = '=';
-								logger.debug(`Filter ${index + 1} - defaulted empty operator to '='`);
-							}
-							
+							// Map the option token to Accord's own operator syntax. Blank
+							// still means equals: n8n leaves this sub-field empty on rows
+							// created before the tokens existed.
+							filter.operator = accordFilterOperator(filter.operator);
+
 							if (filter.value) {
 								if (filter.operator === '=') {
 									// Equals operator: use standard queryParams (n8n handles this correctly)
@@ -924,7 +923,7 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 									});
 								} else {
 									// Non-equals operators: build manually to avoid n8n adding '='
-									const queryPart = `${filter.field}[${filter.operator.toUpperCase()}]${filter.value}`;
+									const queryPart = `${filter.field}[${filter.operator}]${filter.value}`;
 									manualQueryParts.push(queryPart);
 									
 									logger.debug(`Filter ${index + 1} (manual)`, { 
@@ -1555,4 +1554,37 @@ function tryParseJson(value: string): any {
 	} catch {
 		return undefined;
 	}
+}
+
+/**
+ * Translate an Advanced Filter operator into Accord's query syntax.
+ *
+ * The dropdown stores word tokens (equal, gte, notEqual, ...) because n8n
+ * will not hold a bare "=" as an option value - selecting it cleared the
+ * field and flagged it invalid. Accord itself still expects the symbols, so
+ * they are mapped here.
+ *
+ * Workflows saved before the tokens existed hold the raw symbols, or an empty
+ * string where n8n never applied the default, so both are still accepted.
+ * '=' is returned for equals and handled by the caller as a standard query
+ * parameter, never as "field[=]value".
+ */
+function accordFilterOperator(operator?: string): string {
+	const raw = (operator ?? '').trim();
+	if (raw === '') return '=';
+
+	const tokens: Record<string, string> = {
+		equal: '=',
+		notEqual: '<>',
+		gt: '>',
+		gte: '>=',
+		lt: '<',
+		lte: '<=',
+		begins: 'BEGINS',
+		contains: 'CONTAINS',
+		matches: 'MATCHES',
+	};
+
+	// Legacy symbol values ('>', '>=', '<>', ...) pass through unchanged.
+	return tokens[raw] ?? raw.toUpperCase();
 }
