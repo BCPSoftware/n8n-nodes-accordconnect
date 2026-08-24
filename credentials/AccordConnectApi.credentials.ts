@@ -10,11 +10,13 @@ export class AccordConnectApi implements ICredentialType {
 	properties: INodeProperties[] = [
 
 		{
-			displayName: 'BaseUrl',
+			displayName: 'Base URL',
 			name: 'baseUrl',
 			type: 'string',
 			default: '',
 			required: true,
+			placeholder: 'https://accord.example.com/connect/rest/api/v1',
+			description: 'Root URL of the Accord Connect API, including the API path. Resource paths such as /customers are appended to it. A trailing slash is ignored.',
 		},
 		{
 			displayName: 'Username',

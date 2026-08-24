@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-accordconnect",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "n8n community node for Accord Connect ERP system integration with API operations and webhook support",
   "keywords": [
     "n8n-community-node-package",
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/BCPSoftware/n8n-nodes-accordconnect#readme",
   "author": {
     "name": "BCP Software",
-    "email": "support@bcpsoftware.com"
+    "email": "david.shield@bcpsoftware.com"
   },
   "repository": {
     "type": "git",

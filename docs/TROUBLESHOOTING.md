@@ -345,11 +345,35 @@ Complete solutions for common issues with the n8n Accord Connect integration.
 | **403** | Forbidden | Insufficient permissions | Check API key permissions |
 | **404** | Not Found | Resource doesn't exist | Verify resource ID, URL path |
 | **422** | Unprocessable Entity | Validation errors | Check required fields |
+| **422** | Unprocessable Entity | API module not licensed | Contact your Accord administrator (see below) |
 | **429** | Too Many Requests | Rate limit exceeded | Add delays between requests |
 | **500** | Internal Server Error | API server issues | Contact API administrator |
 | **502** | Bad Gateway | Network/proxy issues | Check network connectivity |
 | **503** | Service Unavailable | API maintenance | Try again later |
 | **504** | Gateway Timeout | Request took too long | Reduce scope or increase timeout |
+
+### Unlicensed API Modules
+
+Accord licenses API modules individually, so a resource offered by this node may
+not be enabled on your installation. The request is well-formed - it is simply
+not permitted - so no amount of checking parameters will help.
+
+The response identifies it clearly:
+
+```json
+{
+  "errors": [
+    { "errorType": "System", "errorMsg": "Unlicensed GET API v1/agecodes" }
+  ]
+}
+```
+
+The node reports this as *"The <resource> API is not licensed on this Accord
+instance"* rather than as a validation failure.
+
+**What to do:** contact your Accord administrator to have the module licensed,
+or pick a resource your instance supports. Which of the node's resources are
+available depends on your Accord licence, not on the node.
 
 ### Common Validation Errors
 

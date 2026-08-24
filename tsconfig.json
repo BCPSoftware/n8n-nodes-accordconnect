@@ -15,10 +15,13 @@
 		"preserveConstEnums": true,
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
-		"incremental": true,
-		// Keep the build cache out of dist/ - "files" in package.json is an
-		// allowlist that overrides .npmignore, so anything left in dist/ ships.
-		"tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildinfo",
+		// Incremental builds are deliberately off. The build cache cannot live
+		// in dist/ ("files" is an allowlist that overrides .npmignore, so it
+		// would ship), but keeping it outside dist/ means `rm -rf dist` leaves
+		// a cache tsc still believes, and it then emits almost nothing - a
+		// 2-file package that looks like a successful build. A full compile
+		// takes a couple of seconds; correctness is worth more.
+		"incremental": false,
 		"declaration": true,
 		"sourceMap": true,
 		"skipLibCheck": true,

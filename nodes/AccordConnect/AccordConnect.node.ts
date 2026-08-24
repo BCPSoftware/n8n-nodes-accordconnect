@@ -290,6 +290,79 @@ export class AccordConnect implements INodeType {
 	 * @throws {NodeApiError} When API requests fail or return invalid responses
 	 */
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		const inputItems = this.getInputData();
+		const returnData: INodeExecutionData[] = [];
+
+		for (let itemIndex = 0; itemIndex < inputItems.length; itemIndex++) {
+			try {
+				const itemResults = await executeForItem.call(this, itemIndex);
+				for (const result of itemResults) {
+					// Record which input item produced this output so n8n can
+					// trace lineage back through the workflow.
+					returnData.push({ ...result, pairedItem: { item: itemIndex } });
+				}
+			} catch (error) {
+				if (this.continueOnFail()) {
+					returnData.push({
+						json: { error: error.message },
+						pairedItem: { item: itemIndex },
+					});
+					continue;
+				}
+				throw error;
+			}
+		}
+
+		return [returnData];
+	}
+}
+
+/**
+ * FILE STRUCTURE SUMMARY:
+ * 
+ * 1. IMPORTS & SETUP
+ *    - n8n workflow interfaces and utilities
+ *    - Auto-generated field definitions from OpenAPI spec
+ *    - Logger utility for debugging
+ * 
+ * 2. NODE DESCRIPTION
+ *    - Resource options (customers, products, orders, etc.)
+ *    - Auto-generated field arrays spread into properties
+ *    - Credential configuration
+ * 
+ * 3. EXECUTION METHOD
+ *    - Credential validation and auth header creation
+ *    - Endpoint construction with includeLines support
+ *    - Field mapping lookup and parameter processing
+ *    - List operations with multiple filter modes
+ *    - Non-list operations with body/query parameter routing
+ *    - HTTP request construction and execution
+ *    - Response processing with unwrap options
+ *    - Comprehensive error handling
+ * 
+ * 4. KEY FEATURES
+ *    - Auto-generated fields from OpenAPI specification
+ *    - nextID-based pagination for large datasets
+ *    - Multiple filter interfaces (common, advanced, raw)
+ *    - Include lines functionality for purchase orders
+ *    - Flexible create modes (simple fields vs raw JSON)
+ *    - Smart parameter processing with displayOptions validation
+ *    - Extensive logging for debugging and monitoring
+ */
+
+
+/**
+ * Runs the configured operation for a single input item.
+ *
+ * Split out of execute() so that every parameter read resolves against the
+ * item being processed. Previously the whole body read parameters at index 0,
+ * so a node fed several items issued one request built from the first item
+ * and silently discarded the rest.
+ *
+ * @param itemIndex - Index of the input item to process
+ * @returns The output items produced for this input item
+ */
+async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promise<INodeExecutionData[]> {
 		/**
 		 * Helper function to log API requests consistently across operations
 		 * 
@@ -312,13 +385,18 @@ export class AccordConnect implements INodeType {
 			throw new NodeOperationError(this.getNode(), 'Missing credentials for Accord Connect API');
 		}
 
+		// Normalise the configured root: resource paths are appended with a
+		// leading slash, so a trailing slash on the credential would produce
+		// a double slash (".../v1//customers"), which some servers 404 on.
+		const baseUrl = (credentials.baseUrl as string).replace(/\/+$/, '');
+
 		// Create Basic Auth header for API authentication
 		const authHeader = `Basic ${Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64')}`;
 
 		// Extract core operation parameters
-		const resource = this.getNodeParameter('resource', 0) as string;
-		const operation = this.getNodeParameter('operation', 0) as string;
-		const id = this.getNodeParameter('id', 0, '') as string;
+		const resource = this.getNodeParameter('resource', itemIndex) as string;
+		const operation = this.getNodeParameter('operation', itemIndex) as string;
+		const id = this.getNodeParameter('id', itemIndex, '') as string;
 
 		// Build base endpoint and determine HTTP method based on operation type
 		let endpoint = `/${resource}`;
@@ -334,7 +412,7 @@ export class AccordConnect implements INodeType {
 		 */
 		let includeLines = false;
 		try {
-			includeLines = this.getNodeParameter('includeLines', 0, false) as boolean;
+			includeLines = this.getNodeParameter('includeLines', itemIndex, false) as boolean;
 		} catch (error) {
 			// Parameter not available for this resource, continue with normal flow
 		}
@@ -525,21 +603,21 @@ export class AccordConnect implements INodeType {
 			// Debug parameter availability before processing
 			logger.debug('Raw Parameter Debug');
 			try {
-				const filterMode = this.getNodeParameter('filterMode', 0, 'common');
-				const customerCode = this.getNodeParameter('customerCode', 0, '');
+				const filterMode = this.getNodeParameter('filterMode', itemIndex, 'common');
+				const customerCode = this.getNodeParameter('customerCode', itemIndex, '');
 				logger.debug('Parameters retrieved', { filterMode, customerCode });
 			} catch (error) {
 				logger.warn('Could not get parameters', { error: error.message });
 			}
 			
-			const filterMode = this.getNodeParameter('filterMode', 0, 'common') as string;
+			const filterMode = this.getNodeParameter('filterMode', itemIndex, 'common') as string;
 			logger.debug('List Operation Debug', { filterMode });
 			
 			// COMMON FILTER MODE: Use auto-generated fields with smart processing
 			if (filterMode === 'common') {
 				// Extract pagination configuration
-				const returnAll = this.getNodeParameter('returnAll', 0, false) as boolean;
-				const limit = this.getNodeParameter('limit', 0, 100) as number;
+				const returnAll = this.getNodeParameter('returnAll', itemIndex, false) as boolean;
+				const limit = this.getNodeParameter('limit', itemIndex, 100) as number;
 				
 				logger.debug('Common filters mode', { returnAll, limit });
 				
@@ -580,7 +658,7 @@ export class AccordConnect implements INodeType {
 							
 							for (const [showKey, showValues] of Object.entries(field.displayOptions.show)) {
 								try {
-									const currentValue = this.getNodeParameter(showKey, 0, undefined);
+									const currentValue = this.getNodeParameter(showKey, itemIndex, undefined);
 									if (Array.isArray(showValues) && !showValues.includes(currentValue as string)) {
 										shouldShow = false;
 										break;
@@ -599,7 +677,7 @@ export class AccordConnect implements INodeType {
 						
 						let value;
 						try {
-							value = this.getNodeParameter(field.name, 0, undefined);
+							value = this.getNodeParameter(field.name, itemIndex, undefined);
 						} catch (error) {
 							// If parameter is not available, skip it
 							return;
@@ -651,7 +729,7 @@ export class AccordConnect implements INodeType {
 								'Content-Type': 'application/json',
 								'Authorization': authHeader,
 							},
-							url: `${credentials.baseUrl}/${resource}`,
+							url: `${baseUrl}/${resource}`,
 							qs: currentQuery,
 							json: true,
 						};
@@ -706,7 +784,7 @@ export class AccordConnect implements INodeType {
 						_count: allResults.length
 					};
 					
-					return this.prepareOutputData([{ json: finalResponse }]);
+					return [{ json: finalResponse }];
 				} else {
 					// Set limit for single request
 					queryParams.limit = limit;
@@ -730,7 +808,7 @@ export class AccordConnect implements INodeType {
 						
 						for (const [showKey, showValues] of Object.entries(field.displayOptions.show)) {
 							try {
-								const currentValue = this.getNodeParameter(showKey, 0, undefined);
+								const currentValue = this.getNodeParameter(showKey, itemIndex, undefined);
 								if (Array.isArray(showValues) && !showValues.includes(currentValue as string)) {
 									shouldShow = false;
 									break;
@@ -749,7 +827,7 @@ export class AccordConnect implements INodeType {
 					
 					let value;
 					try {
-						value = this.getNodeParameter(field.name, 0, undefined);
+						value = this.getNodeParameter(field.name, itemIndex, undefined);
 					} catch (error) {
 						// If parameter is not available, skip it
 						logger.debug(`Parameter ${field.name} not available`, { error: error.message });
@@ -803,7 +881,7 @@ export class AccordConnect implements INodeType {
 				 * Note: We can't use standard queryParams for non-equals operators because
 				 * n8n always adds '=' which breaks the Accord Connect API format.
 				 */
-				const filters = this.getNodeParameter('filters', 0, { filterValues: [] }) as { filterValues: Array<{field: string, operator: string, value: string}> };
+				const filters = this.getNodeParameter('filters', itemIndex, { filterValues: [] }) as { filterValues: Array<{field: string, operator: string, value: string}> };
 				
 				logger.debug('Advanced Filters Debug', { filters });
 				
@@ -871,7 +949,7 @@ export class AccordConnect implements INodeType {
 				 * Raw mode allows direct query string input for users who need
 				 * complete control over the API query parameters
 				 */
-				const queryString = this.getNodeParameter('queryString', 0, '') as string;
+				const queryString = this.getNodeParameter('queryString', itemIndex, '') as string;
 				if (queryString) {
 					// Parse query string manually and add to queryParams
 					const pairs = queryString.split('&');
@@ -909,7 +987,7 @@ export class AccordConnect implements INodeType {
 					
 					for (const [showKey, showValues] of Object.entries(field.displayOptions.show)) {
 						try {
-							const currentValue = this.getNodeParameter(showKey, 0, undefined);
+							const currentValue = this.getNodeParameter(showKey, itemIndex, undefined);
 							if (Array.isArray(showValues) && !showValues.includes(currentValue as string)) {
 								shouldShow = false;
 								break;
@@ -928,7 +1006,7 @@ export class AccordConnect implements INodeType {
 				
 				let value;
 				try {
-					value = this.getNodeParameter(field.name, 0, undefined);
+					value = this.getNodeParameter(field.name, itemIndex, undefined);
 				} catch (error) {
 					// If parameter is not available, skip it
 					return;
@@ -1012,7 +1090,7 @@ export class AccordConnect implements INodeType {
 		 */
 		if (resource === 'invoices' || resource === 'statements') {
 			try {
-				const downloadPDFs = this.getNodeParameter('downloadPDFs', 0, false) as boolean;
+				const downloadPDFs = this.getNodeParameter('downloadPDFs', itemIndex, false) as boolean;
 				if (downloadPDFs) {
 					queryParams.fields = 'all';
 					logger.debug('Forcing fields=all for PDF download');
@@ -1036,7 +1114,7 @@ export class AccordConnect implements INodeType {
 
 		// Check if we have manual query parts that need special URL handling
 		const manualQuery = queryParams['__manualQuery'] as string;
-		let finalUrl = `${credentials.baseUrl}${endpoint}`;
+		let finalUrl = `${baseUrl}${endpoint}`;
 		let finalQueryParams = { ...queryParams };
 		
 		// Remove the manual query marker from normal query params
@@ -1109,11 +1187,11 @@ export class AccordConnect implements INodeType {
 				 * - Simple mode: Structured field-based input with automatic wrapping
 				 */
 				if (operation.includes('create')) {
-					const createMode = this.getNodeParameter('createMode', 0, 'simple') as string;
+					const createMode = this.getNodeParameter('createMode', itemIndex, 'simple') as string;
 					
 					if (createMode === 'json') {
 						// Use raw JSON body directly
-						const jsonBody = this.getNodeParameter('jsonBody', 0, '{}') as string;
+						const jsonBody = this.getNodeParameter('jsonBody', itemIndex, '{}') as string;
 						try {
 							return typeof jsonBody === 'string' ? JSON.parse(jsonBody) : jsonBody;
 						} catch (error) {
@@ -1123,7 +1201,7 @@ export class AccordConnect implements INodeType {
 						// Use structured fields (simple/advanced mode)
 						if (Object.keys(bodyParams).length) {
 							// Check if returnGetResponse is enabled and add to request body
-							const returnGetResponse = this.getNodeParameter('returnGetResponse', 0, false) as boolean;
+							const returnGetResponse = this.getNodeParameter('returnGetResponse', itemIndex, false) as boolean;
 							const requestBody: IDataObject = {};
 							
 							if (operation === 'orders:create') {
@@ -1175,12 +1253,12 @@ export class AccordConnect implements INodeType {
 	// Handle PDF download for invoices and statements if requested
 	if (resource === 'invoices' || resource === 'statements') {
 		try {
-			const downloadPDFs = this.getNodeParameter('downloadPDFs', 0, false) as boolean;
+			const downloadPDFs = this.getNodeParameter('downloadPDFs', itemIndex, false) as boolean;
 			logger.debug('PDF Download Check', { downloadPDFs, resource });
 
 			if (downloadPDFs) {
 				logger.debug('PDF download enabled, starting process...');
-				const pdfFormat = this.getNodeParameter('pdfFormat', 0, 'binary') as string;
+				const pdfFormat = this.getNodeParameter('pdfFormat', itemIndex, 'binary') as string;
 				logger.debug('PDF Format', { pdfFormat });
 
 				// Get array from response (invoices or statements)
@@ -1272,7 +1350,7 @@ export class AccordConnect implements INodeType {
 
 	// Handle unwrap option for GET operations
 	if (operation.includes('get')) {
-		const unwrapResponse = this.getNodeParameter('unwrapResponse', 0, true) as boolean;
+		const unwrapResponse = this.getNodeParameter('unwrapResponse', itemIndex, true) as boolean;
 
 		if (unwrapResponse && Array.isArray(response) && response.length === 1) {
 			// Unwrap single-item arrays to just the object
@@ -1293,7 +1371,7 @@ export class AccordConnect implements INodeType {
 				delete item._pdfFileName;
 			}
 
-			return this.prepareOutputData([outputData]);
+			return [outputData];
 		} else if (unwrapResponse && response[resource] && Array.isArray(response[resource]) && response[resource].length === 1) {
 			// Handle wrapped responses like { customers: [...] }
 			const item = response[resource][0];
@@ -1313,7 +1391,7 @@ export class AccordConnect implements INodeType {
 				delete item._pdfFileName;
 			}
 
-			return this.prepareOutputData([outputData]);
+			return [outputData];
 		}
 	}
 
@@ -1344,34 +1422,62 @@ export class AccordConnect implements INodeType {
 	});
 
 	logger.debug('Preparing output data', { itemCount: outputItems.length, hasBinary: outputItems.some(i => i.binary) });
-	return this.prepareOutputData(outputItems);
+	return outputItems;
 
 } catch (error) {
 	/**
 	 * COMPREHENSIVE ERROR HANDLING
-	 * 
+	 *
 	 * Provides user-friendly error messages for common API error scenarios
 	 * with actionable guidance for resolution.
 	 */
-	
+
+	// helpers.request throws a StatusCodeError carrying `statusCode`; only an
+	// already-wrapped NodeApiError carries `httpCode`, and that as a string.
+	// Reading just `httpCode` meant none of the branches below ever matched.
+	const status = httpStatusOf(error);
+
+	// Unlicensed API module (HTTP 422)
+	//
+	// Accord licenses API modules individually, so a perfectly well-formed
+	// request can be rejected because the module is not enabled on that
+	// instance. The body looks like:
+	//   {"errors":[{"errorType":"System","errorMsg":"Unlicensed GET API v1/agecodes"}]}
+	// This is not a validation problem, and telling the user to check their
+	// fields sends them looking for a fault that is not there.
+	if (status === 422 && isUnlicensedError(error)) {
+		throw new NodeApiError(this.getNode(), error, {
+			message: `The ${resource} API is not licensed on this Accord instance`,
+			description: 'The request was valid, but this API module is not enabled for your Accord installation. Contact your Accord administrator to have it licensed, or choose a resource your instance supports.'
+		});
+	}
+
+	// Validation failure (HTTP 422)
+	if (status === 422) {
+		throw new NodeApiError(this.getNode(), error, {
+			message: 'The API rejected the request as invalid',
+			description: 'Check that required fields are present and correctly formatted for this operation.'
+		});
+	}
+
 	// Rate limiting (HTTP 429)
-	if (error.httpCode === 429) {
+	if (status === 429) {
 		throw new NodeApiError(this.getNode(), error, {
 			message: 'API rate limit exceeded',
 			description: 'The API is currently rate limiting requests. Try again later or reduce the request frequency.'
 		});
 	}
-	
+
 	// Request too large (HTTP 413)
-	if (error.httpCode === 413) {
+	if (status === 413) {
 		throw new NodeApiError(this.getNode(), error, {
 			message: 'Request too large',
 			description: 'The request payload is too large. Try using filters to reduce the amount of data or disable "Return All".'
 		});
 	}
-	
+
 	// Server errors (HTTP 5xx)
-	if (error.httpCode >= 500) {
+	if (status !== undefined && status >= 500) {
 		throw new NodeApiError(this.getNode(), error, {
 			message: 'Server error',
 			description: 'The API server is experiencing issues. Please try again later.'
@@ -1379,7 +1485,7 @@ export class AccordConnect implements INodeType {
 	}
 
 	// Resource not found (HTTP 404)
-	if (error.httpCode === 404) {
+	if (status === 404) {
 		throw new NodeApiError(this.getNode(), error, {
 			message: 'Resource not found',
 			description: 'The requested resource was not found. Check your resource configuration and try again.'
@@ -1389,38 +1495,41 @@ export class AccordConnect implements INodeType {
 	// Generic API error fallback
 	throw new NodeApiError(this.getNode(), error);
 }
-	}
 }
 
 /**
- * FILE STRUCTURE SUMMARY:
- * 
- * 1. IMPORTS & SETUP
- *    - n8n workflow interfaces and utilities
- *    - Auto-generated field definitions from OpenAPI spec
- *    - Logger utility for debugging
- * 
- * 2. NODE DESCRIPTION
- *    - Resource options (customers, products, orders, etc.)
- *    - Auto-generated field arrays spread into properties
- *    - Credential configuration
- * 
- * 3. EXECUTION METHOD
- *    - Credential validation and auth header creation
- *    - Endpoint construction with includeLines support
- *    - Field mapping lookup and parameter processing
- *    - List operations with multiple filter modes
- *    - Non-list operations with body/query parameter routing
- *    - HTTP request construction and execution
- *    - Response processing with unwrap options
- *    - Comprehensive error handling
- * 
- * 4. KEY FEATURES
- *    - Auto-generated fields from OpenAPI specification
- *    - nextID-based pagination for large datasets
- *    - Multiple filter interfaces (common, advanced, raw)
- *    - Include lines functionality for purchase orders
- *    - Flexible create modes (simple fields vs raw JSON)
- *    - Smart parameter processing with displayOptions validation
- *    - Extensive logging for debugging and monitoring
+ * Extract an HTTP status code from whatever shape the failure arrived in.
+ *
+ * helpers.request rejects with a request-promise StatusCodeError (`statusCode`,
+ * a number), while an already-wrapped NodeApiError exposes `httpCode` as a
+ * string. Normalise both to a number.
  */
+function httpStatusOf(error: any): number | undefined {
+	const raw = error?.httpCode ?? error?.statusCode ?? error?.response?.statusCode;
+	const code = typeof raw === 'string' ? Number.parseInt(raw, 10) : raw;
+	return Number.isFinite(code) ? (code as number) : undefined;
+}
+
+/**
+ * Does this failure say the API module is not licensed?
+ *
+ * Accord answers with errorType "System" and an errorMsg beginning
+ * "Unlicensed", e.g. "Unlicensed GET API v1/agecodes".
+ */
+function isUnlicensedError(error: any): boolean {
+	const body = error?.error ?? error?.response?.body ?? error?.cause?.error;
+	const parsed = typeof body === 'string' ? tryParseJson(body) : body;
+	const errors = parsed?.errors;
+	if (Array.isArray(errors)) {
+		return errors.some((e: any) => typeof e?.errorMsg === 'string' && e.errorMsg.trim().toLowerCase().startsWith('unlicensed'));
+	}
+	return typeof error?.message === 'string' && /\bunlicensed\b/i.test(error.message);
+}
+
+function tryParseJson(value: string): any {
+	try {
+		return JSON.parse(value);
+	} catch {
+		return undefined;
+	}
+}

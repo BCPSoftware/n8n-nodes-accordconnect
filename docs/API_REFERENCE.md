@@ -466,6 +466,7 @@ The node automatically handles:
 | Error | Cause | Solution |
 |-------|-------|----------|
 | **422 Validation** | Missing required fields | Check `templateID`, required fields |
+| **422 Unlicensed** | API module not licensed on your Accord instance | `errorMsg` reads "Unlicensed GET API v1/...". Contact your Accord administrator |
 | **400 Bad Request** | Invalid filter syntax | Verify operator usage, field names |
 | **401 Unauthorized** | Invalid credentials | Update API credentials |
 | **404 Not Found** | Resource doesn't exist | Verify resource ID |

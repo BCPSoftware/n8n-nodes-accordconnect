@@ -53,6 +53,13 @@ The n8n Accord Connect integration provides two main node types:
 | **Statements** | ❌ | ✅ | ❌ | ❌ | ✅ | PDF download, required filters |
 | **Sales Transactions** | ❌ | ✅ | ❌ | ❌ | ✅ | Transaction history |
 
+> **Availability depends on your Accord licence.** The table above lists what the
+> node supports, not what your installation permits. Accord licenses API modules
+> individually, so selecting a resource your instance does not license returns a
+> 422 with `"Unlicensed GET API v1/..."`. That is a licensing matter for your
+> Accord administrator, not a problem with the request. See
+> [Troubleshooting](./TROUBLESHOOTING.md#unlicensed-api-modules).
+
 ## Node Types
 
 ### Accord Connect Node
@@ -226,7 +233,7 @@ Filter 3: customerName contains "Corp"
 - **400**: Bad Request - Check parameters
 - **401**: Unauthorized - Check credentials
 - **404**: Not Found - Check resource ID
-- **422**: Validation Error - Check required fields
+- **422**: Validation Error - Check required fields, *or* the API module is not licensed on your Accord instance
 - **500**: Server Error - Contact API administrator
 
 #### Retry Strategies
