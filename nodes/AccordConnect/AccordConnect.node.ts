@@ -4,7 +4,10 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	IDataObject,
+	IHttpRequestOptions,
 	INodeProperties,
+	JsonObject,
+	NodeConnectionTypes,
 	NodeOperationError,
 	NodeApiError,
 } from 'n8n-workflow';
@@ -79,12 +82,14 @@ export class AccordConnect implements INodeType {
 		icon: 'file:accordConnect.svg',
 		group: ['transform'],
 		version: 1,
+		usableAsTool: true,
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Interact with Accord Connect API',
 		defaults: {
 			name: 'Accord Connect',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'accordConnectApi',
@@ -309,7 +314,12 @@ export class AccordConnect implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				// executeForItem already raises NodeApiError/NodeOperationError for
+				// API failures; anything else gets wrapped so n8n never receives a
+				// bare Error from this node.
+				throw error instanceof NodeApiError || error instanceof NodeOperationError
+					? error
+					: new NodeApiError(this.getNode(), error as JsonObject);
 			}
 		}
 
@@ -369,7 +379,7 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 		 * @param requestOptions - The HTTP request configuration object
 		 * @param context - Optional context string for the log message
 		 */
-		const logApiRequest = (requestOptions: IDataObject, context: string = 'API'): void => {
+		const logApiRequest = (requestOptions: IHttpRequestOptions, context: string = 'API'): void => {
 			logger.debug(`${context} Request Details`, {
 				method: requestOptions.method,
 				url: requestOptions.url,
@@ -389,9 +399,6 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 		// leading slash, so a trailing slash on the credential would produce
 		// a double slash (".../v1//customers"), which some servers 404 on.
 		const baseUrl = (credentials.baseUrl as string).replace(/\/+$/, '');
-
-		// Create Basic Auth header for API authentication
-		const authHeader = `Basic ${Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64')}`;
 
 		// Extract core operation parameters
 		const resource = this.getNodeParameter('resource', itemIndex) as string;
@@ -722,12 +729,11 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 							currentQuery.nextID = nextID;
 						}
 						
-						const requestOptions: IDataObject = {
+						const requestOptions: IHttpRequestOptions = {
 							method: 'GET',
 							headers: {
 								'Accept': 'application/json',
 								'Content-Type': 'application/json',
-								'Authorization': authHeader,
 							},
 							url: `${baseUrl}/${resource}`,
 							qs: currentQuery,
@@ -737,7 +743,7 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 						logApiRequest(requestOptions, 'Pagination');
 
 						try {
-							const response = await this.helpers.request(requestOptions);
+							const response = await this.helpers.httpRequestWithAuthentication.call(this, 'accordConnectApi', requestOptions);
 
 							if (!response || typeof response !== 'object') {
 								throw new NodeApiError(this.getNode(), response || {}, { message: 'Invalid API response format' });
@@ -1168,12 +1174,11 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 			});
 		}
 
-		const requestOptions: IDataObject = {
+		const requestOptions: IHttpRequestOptions = {
 			method: requestMethod,
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
-				'Authorization': authHeader,
 			},
 			url: finalUrl,
 			// Don't use qs when we have manual query parts to avoid double encoding
@@ -1243,7 +1248,7 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 	});
 
 		try {
-		const response = await this.helpers.request(requestOptions);
+		const response = await this.helpers.httpRequestWithAuthentication.call(this, 'accordConnectApi', requestOptions);
 
 
 	if (!response || typeof response !== 'object') {
@@ -1281,11 +1286,10 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 							logger.debug('Downloading PDF', { url: pdfUrl });
 
 							// Make authenticated request to get PDF (use same auth as main request)
-							const pdfResponse = await this.helpers.request({
+							const pdfResponse = await this.helpers.httpRequestWithAuthentication.call(this, 'accordConnectApi', {
 								method: 'GET',
 								url: pdfUrl,
 								headers: {
-									'Authorization': authHeader,
 									'Content-Type': 'application/json'
 								},
 								json: true
@@ -1505,7 +1509,10 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
  * string. Normalise both to a number.
  */
 function httpStatusOf(error: any): number | undefined {
-	const raw = error?.httpCode ?? error?.statusCode ?? error?.response?.statusCode;
+	const raw = error?.httpCode
+		?? error?.statusCode
+		?? error?.response?.status          // axios, via helpers.httpRequest
+		?? error?.response?.statusCode;
 	const code = typeof raw === 'string' ? Number.parseInt(raw, 10) : raw;
 	return Number.isFinite(code) ? (code as number) : undefined;
 }
@@ -1517,7 +1524,10 @@ function httpStatusOf(error: any): number | undefined {
  * "Unlicensed", e.g. "Unlicensed GET API v1/agecodes".
  */
 function isUnlicensedError(error: any): boolean {
-	const body = error?.error ?? error?.response?.body ?? error?.cause?.error;
+	const body = error?.response?.data   // axios, via helpers.httpRequest
+		?? error?.error
+		?? error?.response?.body
+		?? error?.cause?.error;
 	const parsed = typeof body === 'string' ? tryParseJson(body) : body;
 	const errors = parsed?.errors;
 	if (Array.isArray(errors)) {

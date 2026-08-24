@@ -5,6 +5,8 @@ import {
 	INodeTypeDescription,
 	INodeProperties,
 	IDataObject,
+	IHookFunctions,
+	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -18,11 +20,12 @@ export class AccordWebhookTrigger implements INodeType {
 		group: ['trigger'],
 		version: 1,
 		description: 'Receives Accord webhooks, verifies X-Signature-256 HMAC, and emits payload',
+		subtitle: '={{$parameter["path"]}}',
 		defaults: {
 			name: 'Accord Webhook (Verify)',
 		},
 		inputs: [],
-		outputs: ['main'],
+		outputs: [NodeConnectionTypes.Main],
 		webhooks: [
 			{
 				name: 'default',
@@ -68,6 +71,34 @@ export class AccordWebhookTrigger implements INodeType {
 				description: 'Whether to attempt to parse request body as JSON',
 			},
 		],
+	};
+
+	/**
+	 * Webhook lifecycle.
+	 *
+	 * Accord Connect exposes no subscription API: its OpenAPI spec documents
+	 * webhooks only as outbound callbacks - the payload shapes Accord sends -
+	 * with no endpoint for registering, listing or removing a subscription.
+	 * Delivery is configured inside Accord itself, against the URL n8n shows
+	 * on this node.
+	 *
+	 * So there is nothing to create or tear down remotely. checkExists reports
+	 * the webhook as present, which stops n8n attempting a registration it
+	 * cannot perform; create and delete are deliberate no-ops rather than
+	 * calls that would silently fail.
+	 */
+	webhookMethods = {
+		default: {
+			async checkExists(this: IHookFunctions): Promise<boolean> {
+				return true;
+			},
+			async create(this: IHookFunctions): Promise<boolean> {
+				return true;
+			},
+			async delete(this: IHookFunctions): Promise<boolean> {
+				return true;
+			},
+		},
 	};
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
