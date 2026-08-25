@@ -426,6 +426,12 @@ Some resources (like Customers, Claims) require template or type specification:
 **Key Fields:** ageCode, ageMessage, lastUpdate
 **Special Features:** Age code definitions, read-only resource
 
+#### Allergens
+**Operations:** Read, List
+**Key Fields:** allergenCode, allergenName, allergenDescription, allergenQualifier
+**Special Features:** Allergen definitions for product labelling, read-only resource
+**Filters:** allergenCode, allergenName, allergenDescription, allergenQualifier, lastUpdate
+
 #### Attribute Groups
 **Operations:** Create, Read, Update, Delete, List
 **Key Fields:** attributeGroupCode, attributeGroupName, description

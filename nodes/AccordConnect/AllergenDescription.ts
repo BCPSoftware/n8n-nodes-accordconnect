@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 // Generated from OpenAPI spec v430.002.0007 - 25/08/26 - do not edit by hand
 
-export const attributeGroupsOperations: INodeProperties[] = [
+export const allergensOperations: INodeProperties[] = [
     {
         displayName: 'Operation',
         name: 'operation',
@@ -10,59 +10,53 @@ export const attributeGroupsOperations: INodeProperties[] = [
         noDataExpression: true,
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
+                resource: ['allergens'],
             },
         },
         options: [
             {
                 name: 'Create',
-                value: 'attributeGroups:create',
-                description: 'Create a attributeGroup',
-                action: 'Create a attribute group'
-            },
-            {
-                name: 'Delete',
-                value: 'attributeGroups:delete',
-                description: 'Delete a attributeGroup',
-                action: 'Delete a attribute group'
+                value: 'allergens:create',
+                description: 'Create a allergen',
+                action: 'Create a allergen'
             },
             {
                 name: 'Get',
-                value: 'attributeGroups:get',
-                description: 'Get a attributeGroup',
-                action: 'Get a attribute group'
+                value: 'allergens:get',
+                description: 'Get a allergen',
+                action: 'Get a allergen'
             },
             {
                 name: 'List',
-                value: 'attributeGroups:list',
-                description: 'List many attributeGroups',
-                action: 'List many attribute groups'
+                value: 'allergens:list',
+                description: 'List many allergens',
+                action: 'List many allergens'
             },
             {
                 name: 'Update',
-                value: 'attributeGroups:update',
-                description: 'Update a attributeGroup',
-                action: 'Update a attribute group'
+                value: 'allergens:update',
+                description: 'Update a allergen',
+                action: 'Update a allergen'
             },
         ],
-        default: 'attributeGroups:create',
+        default: 'allergens:create',
     },
 ];
 
 
-export const attributeGroupsReadFields: INodeProperties[] = [
+export const allergensReadFields: INodeProperties[] = [
     {
         displayName: 'ID',
         name: 'id',
         type: 'string',
         default: '',
-        description: 'Unique identifier for the attributeGroup',
+        description: 'Unique identifier for the allergen',
         required: true,
         placeholder: 'e.g. ORDER001',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:get']
+                resource: ['allergens'],
+                operation: ['allergens:get']
             }
         }
     },
@@ -72,7 +66,7 @@ export const attributeGroupsReadFields: INodeProperties[] = [
         type: 'multiOptions',
         default: [],
         description: 'Select specific fields to return in the response (leave empty for default fields)',
-        placeholder: 'attributeGroup,description,keyTable,keyField',
+        placeholder: 'allergenCode,allergenName,allergenDescription,allergenQualifier',
         options: [
             {
                 name: '* All Fields',
@@ -80,34 +74,24 @@ export const attributeGroupsReadFields: INodeProperties[] = [
                 description: 'Return all available fields'
             },
             {
-                name: 'Attribute Group',
-                value: 'attributeGroup',
-                description: 'Include attribute group in the response'
+                name: 'Allergen Code',
+                value: 'allergenCode',
+                description: 'Include allergen code in the response'
             },
             {
-                name: 'Company Code',
-                value: 'companyCode',
-                description: 'Include company code in the response'
+                name: 'Allergen Description',
+                value: 'allergenDescription',
+                description: 'Include allergen description in the response'
             },
             {
-                name: 'Depot',
-                value: 'depot',
-                description: 'Include depot in the response'
+                name: 'Allergen Name',
+                value: 'allergenName',
+                description: 'Include allergen name in the response'
             },
             {
-                name: 'Description',
-                value: 'description',
-                description: 'Include description in the response'
-            },
-            {
-                name: 'Key Field',
-                value: 'keyField',
-                description: 'Include key field in the response'
-            },
-            {
-                name: 'Key Table',
-                value: 'keyTable',
-                description: 'Include key table in the response'
+                name: 'Allergen Qualifier',
+                value: 'allergenQualifier',
+                description: 'Include allergen qualifier in the response'
             },
             {
                 name: 'Last Update',
@@ -115,15 +99,15 @@ export const attributeGroupsReadFields: INodeProperties[] = [
                 description: 'Include last update in the response'
             },
             {
-                name: 'Ledger Code',
-                value: 'ledgerCode',
-                description: 'Include ledger code in the response'
+                name: 'Maximum Quantity',
+                value: 'maximumQuantity',
+                description: 'Include maximum quantity in the response'
             }
         ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:get']
+                resource: ['allergens'],
+                operation: ['allergens:get']
             }
         }
     },
@@ -135,8 +119,8 @@ export const attributeGroupsReadFields: INodeProperties[] = [
         description: 'Whether return the single record directly instead of wrapped in an array',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:get']
+                resource: ['allergens'],
+                operation: ['allergens:get']
             }
         }
     },
@@ -149,7 +133,7 @@ export const attributeGroupsReadFields: INodeProperties[] = [
         placeholder: 'false',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
+                resource: ['allergens'],
                 operation: ['get']
             }
         }
@@ -163,7 +147,7 @@ export const attributeGroupsReadFields: INodeProperties[] = [
         placeholder: 'true',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
+                resource: ['allergens'],
                 operation: ['get']
             }
         }
@@ -180,109 +164,119 @@ export const attributeGroupsReadFields: INodeProperties[] = [
         placeholder: '60',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
+                resource: ['allergens'],
                 operation: ['get']
             }
         }
     }
 ];
 
-export const attributeGroupsUpdateFields: INodeProperties[] = [
+export const allergensUpdateFields: INodeProperties[] = [
     {
-        displayName: 'Attribute Group',
-        name: 'attributeGroup',
+        displayName: 'Allergen Code',
+        name: 'allergenCode',
         type: 'string',
         default: '',
-        description: 'The attribute group value',
+        description: 'The allergen code value',
         required: true,
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
+                resource: ['allergens'],
+                operation: ['allergens:update']
             }
         }
     },
     {
-        displayName: 'Description',
-        name: 'description',
+        displayName: 'Allergen Name',
+        name: 'allergenName',
         type: 'string',
         default: '',
-        description: 'Group Description',
+        description: 'The allergen name value',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
+                resource: ['allergens'],
+                operation: ['allergens:update']
             }
         }
     },
     {
-        displayName: 'Key Table',
-        name: 'keyTable',
+        displayName: 'Allergen Description',
+        name: 'allergenDescription',
         type: 'string',
         default: '',
-        description: 'The key table value',
+        description: 'The allergen description value',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
+                resource: ['allergens'],
+                operation: ['allergens:update']
             }
         }
     },
     {
-        displayName: 'Key Field',
-        name: 'keyField',
-        type: 'string',
+        displayName: 'Allergen Qualifier',
+        name: 'allergenQualifier',
+        type: 'options',
+        default: 'a:Attribute',
+        description: 'The allergen qualifier value',
+        required: true,
+        options: [
+            {
+                name: 'Attribute',
+                value: 'a:Attribute',
+                description: 'Attribute (code: a)'
+            },
+            {
+                name: 'Contains',
+                value: 'c:Contains',
+                description: 'Contains (code: c)'
+            },
+            {
+                name: 'Free From',
+                value: 'f:Free from',
+                description: 'Free from (code: f)'
+            },
+            {
+                name: 'May Contain',
+                value: 'm:May contain',
+                description: 'May contain (code: m)'
+            },
+            {
+                name: 'Produced in Factory that Uses',
+                value: 'p:Produced in factory that uses',
+                description: 'Produced in factory that uses (code: p)'
+            },
+            {
+                name: 'Suitable for',
+                value: 's:Suitable for',
+                description: 'Suitable for (code: s)'
+            }
+        ],
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:update']
+            }
+        }
+    },
+    {
+        displayName: 'Maximum Quantity',
+        name: 'maximumQuantity',
+        type: 'number',
         default: '',
-        description: 'The key field value',
+        description: 'Maximum Purchase Quantity',
+        typeOptions: {
+            minValue: 0
+        },
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
-            }
-        }
-    },
-    {
-        displayName: 'Depot',
-        name: 'depot',
-        type: 'boolean',
-        default: false,
-        description: 'Whether the depot value',
-        displayOptions: {
-            show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
-            }
-        }
-    },
-    {
-        displayName: 'Company Code',
-        name: 'companyCode',
-        type: 'boolean',
-        default: false,
-        description: 'Whether company',
-        displayOptions: {
-            show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
-            }
-        }
-    },
-    {
-        displayName: 'Ledger Code',
-        name: 'ledgerCode',
-        type: 'boolean',
-        default: false,
-        description: 'Whether ledger',
-        displayOptions: {
-            show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:update']
+                resource: ['allergens'],
+                operation: ['allergens:update']
             }
         }
     }
 ];
 
-export const attributeGroupsListFields: INodeProperties[] = [
+export const allergensListFields: INodeProperties[] = [
     {
         displayName: 'Filter Mode',
         name: 'filterMode',
@@ -308,8 +302,8 @@ export const attributeGroupsListFields: INodeProperties[] = [
         ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list']
+                resource: ['allergens'],
+                operation: ['allergens:list']
             }
         }
     },
@@ -321,8 +315,8 @@ export const attributeGroupsListFields: INodeProperties[] = [
         description: 'Whether to return all results or only up to a given limit',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
@@ -338,8 +332,8 @@ export const attributeGroupsListFields: INodeProperties[] = [
         },
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common'],
                 returnAll: [false]
             }
@@ -354,8 +348,8 @@ export const attributeGroupsListFields: INodeProperties[] = [
         },
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['advanced']
             }
         },
@@ -370,50 +364,42 @@ export const attributeGroupsListFields: INodeProperties[] = [
                         displayName: 'Field',
                         name: 'field',
                         type: 'options',
-                        default: 'attributeGroup',
+                        default: 'allergenCode',
                         description: 'Field name to filter on',
                         required: true,
                         noDataExpression: true,
                         options: [
                             {
-                                name: 'Attribute Group',
-                                value: 'attributeGroup'
+                                name: 'Allergen Code',
+                                value: 'allergenCode'
                             },
                             {
-                                name: 'Company Code',
-                                value: 'companyCode'
+                                name: 'Allergen Description',
+                                value: 'allergenDescription'
                             },
                             {
-                                name: 'Depot',
-                                value: 'depot'
+                                name: 'Allergen Name',
+                                value: 'allergenName'
                             },
                             {
-                                name: 'Description',
-                                value: 'description'
+                                name: 'Allergen Qualifier',
+                                value: 'allergenQualifier'
                             },
                             {
                                 name: 'Hide Nested Keys',
                                 value: 'hideNestedKeys'
                             },
                             {
-                                name: 'Key Field',
-                                value: 'keyField'
-                            },
-                            {
-                                name: 'Key Table',
-                                value: 'keyTable'
-                            },
-                            {
                                 name: 'Last Update',
                                 value: 'lastUpdate'
                             },
                             {
-                                name: 'Ledger Code',
-                                value: 'ledgerCode'
-                            },
-                            {
                                 name: 'Limit',
                                 value: 'limit'
+                            },
+                            {
+                                name: 'Maximum Quantity',
+                                value: 'maximumQuantity'
                             },
                             {
                                 name: 'Nested',
@@ -500,23 +486,100 @@ export const attributeGroupsListFields: INodeProperties[] = [
         placeholder: 'customerCode=10001&lastUpdate>2024-01-01',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['raw']
             }
         }
     },
     {
-        displayName: 'Description',
-        name: 'description',
+        displayName: 'Allergen Code',
+        name: 'allergenCode',
         type: 'string',
         default: '',
-        description: 'Group Description (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE,begins,matches)',
-        placeholder: 'Product attributes',
+        description: 'Allergen Code (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE,begins,matches)',
+        placeholder: 'SOY',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
+                filterMode: ['common']
+            }
+        }
+    },
+    {
+        displayName: 'Allergen Name',
+        name: 'allergenName',
+        type: 'string',
+        default: '',
+        description: 'Allergen Name (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE,begins,matches)',
+        placeholder: 'Soyabeans',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:list'],
+                filterMode: ['common']
+            }
+        }
+    },
+    {
+        displayName: 'Allergen Description',
+        name: 'allergenDescription',
+        type: 'string',
+        default: '',
+        description: 'Allergen Description (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE,begins,matches)',
+        placeholder: 'Soyabeans',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:list'],
+                filterMode: ['common']
+            }
+        }
+    },
+    {
+        displayName: 'Allergen Qualifier',
+        name: 'allergenQualifier',
+        type: 'multiOptions',
+        default: [],
+        description: 'Allergen Qualifier (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE,begins,matches)',
+        options: [
+            {
+                name: 'Attribute',
+                value: 'a:Attribute',
+                description: 'Attribute (code: a)'
+            },
+            {
+                name: 'Contains',
+                value: 'c:Contains',
+                description: 'Contains (code: c)'
+            },
+            {
+                name: 'Free From',
+                value: 'f:Free from',
+                description: 'Free from (code: f)'
+            },
+            {
+                name: 'May Contain',
+                value: 'm:May contain',
+                description: 'May contain (code: m)'
+            },
+            {
+                name: 'Produced in Factory that Uses',
+                value: 'p:Produced in factory that uses',
+                description: 'Produced in factory that uses (code: p)'
+            },
+            {
+                name: 'Suitable for',
+                value: 's:Suitable for',
+                description: 'Suitable for (code: s)'
+            }
+        ],
+        placeholder: 'c:Contains',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
@@ -527,11 +590,11 @@ export const attributeGroupsListFields: INodeProperties[] = [
         type: 'string',
         default: '',
         description: 'Last Updated (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE)',
-        placeholder: '2021-12-29T11:37:05.527',
+        placeholder: '2021-08-24T11:00:09.018',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
@@ -542,67 +605,47 @@ export const attributeGroupsListFields: INodeProperties[] = [
         type: 'multiOptions',
         default: [],
         description: 'Choose how to sort the results',
-        placeholder: 'attributeGroup,-description',
+        placeholder: 'allergenCode,-allergenName',
         options: [
             {
-                name: 'Attribute Group (Ascending)',
-                value: 'attributeGroup',
-                description: 'Sort by Attribute Group in ascending order'
+                name: 'Allergen Code (Ascending)',
+                value: 'allergenCode',
+                description: 'Sort by Allergen Code in ascending order'
             },
             {
-                name: 'Attribute Group (Descending)',
-                value: '-attributeGroup',
-                description: 'Sort by Attribute Group in descending order'
+                name: 'Allergen Code (Descending)',
+                value: '-allergenCode',
+                description: 'Sort by Allergen Code in descending order'
             },
             {
-                name: 'Company Code (Ascending)',
-                value: 'companyCode',
-                description: 'Sort by Company Code in ascending order'
+                name: 'Allergen Description (Ascending)',
+                value: 'allergenDescription',
+                description: 'Sort by Allergen Description in ascending order'
             },
             {
-                name: 'Company Code (Descending)',
-                value: '-companyCode',
-                description: 'Sort by Company Code in descending order'
+                name: 'Allergen Description (Descending)',
+                value: '-allergenDescription',
+                description: 'Sort by Allergen Description in descending order'
             },
             {
-                name: 'Depot (Ascending)',
-                value: 'depot',
-                description: 'Sort by Depot in ascending order'
+                name: 'Allergen Name (Ascending)',
+                value: 'allergenName',
+                description: 'Sort by Allergen Name in ascending order'
             },
             {
-                name: 'Depot (Descending)',
-                value: '-depot',
-                description: 'Sort by Depot in descending order'
+                name: 'Allergen Name (Descending)',
+                value: '-allergenName',
+                description: 'Sort by Allergen Name in descending order'
             },
             {
-                name: 'Description (Ascending)',
-                value: 'description',
-                description: 'Sort by Description in ascending order'
+                name: 'Allergen Qualifier (Ascending)',
+                value: 'allergenQualifier',
+                description: 'Sort by Allergen Qualifier in ascending order'
             },
             {
-                name: 'Description (Descending)',
-                value: '-description',
-                description: 'Sort by Description in descending order'
-            },
-            {
-                name: 'Key Field (Ascending)',
-                value: 'keyField',
-                description: 'Sort by Key Field in ascending order'
-            },
-            {
-                name: 'Key Field (Descending)',
-                value: '-keyField',
-                description: 'Sort by Key Field in descending order'
-            },
-            {
-                name: 'Key Table (Ascending)',
-                value: 'keyTable',
-                description: 'Sort by Key Table in ascending order'
-            },
-            {
-                name: 'Key Table (Descending)',
-                value: '-keyTable',
-                description: 'Sort by Key Table in descending order'
+                name: 'Allergen Qualifier (Descending)',
+                value: '-allergenQualifier',
+                description: 'Sort by Allergen Qualifier in descending order'
             },
             {
                 name: 'Last Update (Ascending)',
@@ -615,20 +658,20 @@ export const attributeGroupsListFields: INodeProperties[] = [
                 description: 'Sort by Last Update in descending order'
             },
             {
-                name: 'Ledger Code (Ascending)',
-                value: 'ledgerCode',
-                description: 'Sort by Ledger Code in ascending order'
+                name: 'Maximum Quantity (Ascending)',
+                value: 'maximumQuantity',
+                description: 'Sort by Maximum Quantity in ascending order'
             },
             {
-                name: 'Ledger Code (Descending)',
-                value: '-ledgerCode',
-                description: 'Sort by Ledger Code in descending order'
+                name: 'Maximum Quantity (Descending)',
+                value: '-maximumQuantity',
+                description: 'Sort by Maximum Quantity in descending order'
             }
         ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
@@ -642,8 +685,8 @@ export const attributeGroupsListFields: INodeProperties[] = [
         placeholder: 'true',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
@@ -661,34 +704,24 @@ export const attributeGroupsListFields: INodeProperties[] = [
                 description: 'Return all available fields'
             },
             {
-                name: 'Attribute Group',
-                value: 'attributeGroup',
-                description: 'Include attribute group in the response'
+                name: 'Allergen Code',
+                value: 'allergenCode',
+                description: 'Include allergen code in the response'
             },
             {
-                name: 'Company Code',
-                value: 'companyCode',
-                description: 'Include company code in the response'
+                name: 'Allergen Description',
+                value: 'allergenDescription',
+                description: 'Include allergen description in the response'
             },
             {
-                name: 'Depot',
-                value: 'depot',
-                description: 'Include depot in the response'
+                name: 'Allergen Name',
+                value: 'allergenName',
+                description: 'Include allergen name in the response'
             },
             {
-                name: 'Description',
-                value: 'description',
-                description: 'Include description in the response'
-            },
-            {
-                name: 'Key Field',
-                value: 'keyField',
-                description: 'Include key field in the response'
-            },
-            {
-                name: 'Key Table',
-                value: 'keyTable',
-                description: 'Include key table in the response'
+                name: 'Allergen Qualifier',
+                value: 'allergenQualifier',
+                description: 'Include allergen qualifier in the response'
             },
             {
                 name: 'Last Update',
@@ -696,22 +729,22 @@ export const attributeGroupsListFields: INodeProperties[] = [
                 description: 'Include last update in the response'
             },
             {
-                name: 'Ledger Code',
-                value: 'ledgerCode',
-                description: 'Include ledger code in the response'
+                name: 'Maximum Quantity',
+                value: 'maximumQuantity',
+                description: 'Include maximum quantity in the response'
             }
         ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:list'],
+                resource: ['allergens'],
+                operation: ['allergens:list'],
                 filterMode: ['common']
             }
         }
     }
 ];
 
-export const attributeGroupsCreateFields: INodeProperties[] = [
+export const allergensCreateFields: INodeProperties[] = [
     {
         displayName: 'Create Mode',
         name: 'createMode',
@@ -737,8 +770,8 @@ export const attributeGroupsCreateFields: INodeProperties[] = [
         ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create']
+                resource: ['allergens'],
+                operation: ['allergens:create']
             }
         }
     },
@@ -747,120 +780,125 @@ export const attributeGroupsCreateFields: INodeProperties[] = [
         name: 'jsonBody',
         type: 'json',
         default: '{}',
-        description: 'Raw JSON body for creating attribute group records. Provide the complete request payload.',
+        description: 'Raw JSON body for creating allergen records. Provide the complete request payload.',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['json']
             }
         },
         placeholder: `{
-  "attributeGroups": [
+  "allergens": [
     {
-      // Add your attribute group fields here
+      // Add your allergen fields here
     }
   ]
 }`
     },
     {
-        displayName: 'Attribute Group',
-        name: 'attributeGroup',
+        displayName: 'Allergen Code',
+        name: 'allergenCode',
         type: 'string',
         default: '',
-        description: 'The attribute group value',
+        description: 'The allergen code value',
         required: true,
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['simple']
             }
         }
     },
     {
-        displayName: 'Description',
-        name: 'description',
-        type: 'string',
-        default: '',
-        description: 'Group Description',
+        displayName: 'Allergen Qualifier',
+        name: 'allergenQualifier',
+        type: 'options',
+        default: 'a:Attribute',
+        description: 'The allergen qualifier value',
         required: true,
+        options: [
+            {
+                name: 'Attribute',
+                value: 'a:Attribute',
+                description: 'Attribute (code: a)'
+            },
+            {
+                name: 'Contains',
+                value: 'c:Contains',
+                description: 'Contains (code: c)'
+            },
+            {
+                name: 'Free From',
+                value: 'f:Free from',
+                description: 'Free from (code: f)'
+            },
+            {
+                name: 'May Contain',
+                value: 'm:May contain',
+                description: 'May contain (code: m)'
+            },
+            {
+                name: 'Produced in Factory that Uses',
+                value: 'p:Produced in factory that uses',
+                description: 'Produced in factory that uses (code: p)'
+            },
+            {
+                name: 'Suitable for',
+                value: 's:Suitable for',
+                description: 'Suitable for (code: s)'
+            }
+        ],
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['simple']
             }
         }
     },
     {
-        displayName: 'Key Table',
-        name: 'keyTable',
+        displayName: 'Allergen Name',
+        name: 'allergenName',
         type: 'string',
         default: '',
-        description: 'The key table value',
-        required: true,
+        description: 'The allergen name value',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
-                createMode: ['simple']
-            }
-        }
-    },
-    {
-        displayName: 'Key Field',
-        name: 'keyField',
-        type: 'string',
-        default: '',
-        description: 'The key field value',
-        required: true,
-        displayOptions: {
-            show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
-                createMode: ['simple']
-            }
-        }
-    },
-    {
-        displayName: 'Depot',
-        name: 'depot',
-        type: 'boolean',
-        default: false,
-        description: 'Whether the depot value',
-        displayOptions: {
-            show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['advanced']
             }
         }
     },
     {
-        displayName: 'Company Code',
-        name: 'companyCode',
-        type: 'boolean',
-        default: false,
-        description: 'Whether company',
+        displayName: 'Allergen Description',
+        name: 'allergenDescription',
+        type: 'string',
+        default: '',
+        description: 'The allergen description value',
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['advanced']
             }
         }
     },
     {
-        displayName: 'Ledger Code',
-        name: 'ledgerCode',
-        type: 'boolean',
-        default: false,
-        description: 'Whether ledger',
+        displayName: 'Maximum Quantity',
+        name: 'maximumQuantity',
+        type: 'number',
+        default: '',
+        description: 'Maximum Purchase Quantity',
+        typeOptions: {
+            minValue: 0
+        },
         displayOptions: {
             show: {
-                resource: ['attributeGroups'],
-                operation: ['attributeGroups:create'],
+                resource: ['allergens'],
+                operation: ['allergens:create'],
                 createMode: ['advanced']
             }
         }

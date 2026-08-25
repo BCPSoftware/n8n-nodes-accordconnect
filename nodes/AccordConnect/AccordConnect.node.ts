@@ -49,6 +49,7 @@ import { claimLinesOperations, claimLinesReadFields, claimLinesListFields } from
 import { salesTransactionsOperations, salesTransactionsReadFields, salesTransactionsListFields } from './SalesTransactionDescription';
 import { invoicesOperations, invoicesReadFields, invoicesListFields } from './InvoiceDescription';
 import { statementsOperations, statementsReadFields, statementsListFields } from './StatementDescription';
+import { allergensOperations, allergensReadFields, allergensListFields } from './AllergenDescription';
 import { ageCodesOperations, ageCodesReadFields, ageCodesListFields } from './AgeCodeDescription';
 import { countriesOperations, countriesReadFields, countriesListFields } from './CountrieDescription';
 import { dutyCodesOperations, dutyCodesReadFields, dutyCodesListFields } from './DutyCodeDescription';
@@ -104,6 +105,7 @@ export class AccordConnect implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Age Code', value: 'ageCodes' },
+					{ name: 'Allergen', value: 'allergens' },
 					{ name: 'Attribute Group', value: 'attributeGroups' },
 					{ name: 'Attribute Name', value: 'attributeNames' },
 					{ name: 'Brand', value: 'brands' },
@@ -252,6 +254,9 @@ export class AccordConnect implements INodeType {
 			...statementsOperations,
 			...statementsReadFields,
 			...statementsListFields,
+			...allergensOperations,
+			...allergensReadFields,
+			...allergensListFields,
 			...ageCodesOperations,
 			...ageCodesReadFields,
 			...ageCodesListFields,
@@ -565,6 +570,8 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 			'invoices:list': invoicesListFields,
 			'statements:get': statementsReadFields,
 			'statements:list': statementsListFields,
+			'allergens:get': allergensReadFields,
+			'allergens:list': allergensListFields,
 			'ageCodes:get': ageCodesReadFields,
 			'ageCodes:list': ageCodesListFields,
 			'countries:get': countriesReadFields,

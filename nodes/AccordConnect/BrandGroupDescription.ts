@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-// Generated from OpenAPI spec v430.002.0006 - 24/08/26 - do not edit by hand
+// Generated from OpenAPI spec v430.002.0007 - 25/08/26 - do not edit by hand
 
 export const brandGroupsOperations: INodeProperties[] = [
     {
