@@ -47,7 +47,7 @@ The n8n Accord Connect integration provides two main node types:
 | **Mix Match Schemes** | ❌ | ✅ | ❌ | ❌ | ✅ | Mix & match deals |
 | **Mix Match Lines** | ❌ | ✅ | ❌ | ❌ | ✅ | Mix & match line items |
 | **Age Codes** | ❌ | ✅ | ❌ | ❌ | ✅ | Age code definitions |
-| **Allergens** | ❌ | ✅ | ❌ | ❌ | ✅ | Allergen definitions for product labelling |
+| **Allergens** | ✅ | ✅ | ✅ | ❌ | ✅ | Allergen definitions for product labelling |
 | **Attribute Groups** | ✅ | ✅ | ✅ | ✅ | ✅ | Full CRUD support |
 | **Attribute Names** | ✅ | ✅ | ✅ | ✅ | ✅ | Full CRUD support |
 | **Invoices** | ❌ | ✅ | ❌ | ❌ | ✅ | PDF download, required filters |

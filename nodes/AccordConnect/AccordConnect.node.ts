@@ -21,9 +21,9 @@ import { createLogger } from '../../utils/logger';
  * IMPORTANT: These imports are automatically generated from the OpenAPI spec.
  * Do not modify these imports manually. Use `pnpm build` to regenerate.
  */
-import { customersOperations, customersReadFields, customersListFields, customersCreateFields } from './CustomerDescription';
-import { productsOperations, productsReadFields, productsListFields, productsCreateFields } from './ProductDescription';
-import { ordersOperations, ordersReadFields, ordersListFields, ordersCreateFields } from './OrderDescription';
+import { customersOperations, customersReadFields, customersListFields, customersCreateFields, customersUpdateFields } from './CustomerDescription';
+import { productsOperations, productsReadFields, productsListFields, productsCreateFields, productsUpdateFields } from './ProductDescription';
+import { ordersOperations, ordersReadFields, ordersListFields, ordersCreateFields, ordersUpdateFields } from './OrderDescription';
 import { depotsOperations, depotsReadFields, depotsListFields } from './DepotDescription';
 import { purchaseOrdersOperations, purchaseOrdersReadFields, purchaseOrdersListFields, purchaseOrdersCreateFields, purchaseOrdersUpdateFields, includeLinesConfig } from './PurchaseOrderDescription';
 import { purchaseOrderLinesOperations, purchaseOrderLinesReadFields, purchaseOrderLinesListFields } from './PurchaseOrderLineDescription';
@@ -49,7 +49,7 @@ import { claimLinesOperations, claimLinesReadFields, claimLinesListFields } from
 import { salesTransactionsOperations, salesTransactionsReadFields, salesTransactionsListFields } from './SalesTransactionDescription';
 import { invoicesOperations, invoicesReadFields, invoicesListFields } from './InvoiceDescription';
 import { statementsOperations, statementsReadFields, statementsListFields } from './StatementDescription';
-import { allergensOperations, allergensReadFields, allergensListFields } from './AllergenDescription';
+import { allergensOperations, allergensReadFields, allergensListFields, allergensCreateFields, allergensUpdateFields } from './AllergenDescription';
 import { ageCodesOperations, ageCodesReadFields, ageCodesListFields } from './AgeCodeDescription';
 import { countriesOperations, countriesReadFields, countriesListFields } from './CountrieDescription';
 import { dutyCodesOperations, dutyCodesReadFields, dutyCodesListFields } from './DutyCodeDescription';
@@ -159,14 +159,17 @@ export class AccordConnect implements INodeType {
 			...customersReadFields,
 			...customersListFields,
 			...customersCreateFields,
+			...customersUpdateFields,
 			...productsOperations,
 			...productsReadFields,
 			...productsListFields,
 			...productsCreateFields,
+			...productsUpdateFields,
 			...ordersOperations,
 			...ordersReadFields,
 			...ordersListFields,
 			...ordersCreateFields,
+			...ordersUpdateFields,
 			...depotsOperations,
 			...depotsReadFields,
 			...depotsListFields,
@@ -257,6 +260,8 @@ export class AccordConnect implements INodeType {
 			...allergensOperations,
 			...allergensReadFields,
 			...allergensListFields,
+			...allergensCreateFields,
+			...allergensUpdateFields,
 			...ageCodesOperations,
 			...ageCodesReadFields,
 			...ageCodesListFields,
@@ -502,12 +507,15 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 			'customers:get': customersReadFields,
 			'customers:list': customersListFields,
 			'customers:create': customersCreateFields,
+			'customers:update': customersUpdateFields,
 			'products:get': productsReadFields,
 			'products:list': productsListFields,
 			'products:create': productsCreateFields,
+			'products:update': productsUpdateFields,
 			'orders:get': ordersReadFields,
 			'orders:list': ordersListFields,
 			'orders:create': ordersCreateFields,
+			'orders:update': ordersUpdateFields,
 			'depots:get': depotsReadFields,
 			'depots:list': depotsListFields,
 			'purchaseOrders:get': purchaseOrdersReadFields,
@@ -572,6 +580,8 @@ async function executeForItem(this: IExecuteFunctions, itemIndex: number): Promi
 			'statements:list': statementsListFields,
 			'allergens:get': allergensReadFields,
 			'allergens:list': allergensListFields,
+			'allergens:create': allergensCreateFields,
+			'allergens:update': allergensUpdateFields,
 			'ageCodes:get': ageCodesReadFields,
 			'ageCodes:list': ageCodesListFields,
 			'countries:get': countriesReadFields,

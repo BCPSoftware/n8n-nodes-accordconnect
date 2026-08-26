@@ -68,7 +68,7 @@ A comprehensive n8n community node package for seamless integration with Accord 
 | Resource | Create | Read | Update | Delete | List | Special Features |
 |----------|--------|------|--------|--------|------|------------------|
 | **Age Codes** | ❌ | ✅ | ❌ | ❌ | ✅ | Age code definitions |
-| **Allergens** | ❌ | ✅ | ❌ | ❌ | ✅ | Allergen definitions for product labelling |
+| **Allergens** | ✅ | ✅ | ✅ | ❌ | ✅ | Allergen definitions for product labelling |
 | **Attribute Groups** | ✅ | ✅ | ✅ | ✅ | ✅ | Full CRUD support |
 | **Attribute Names** | ✅ | ✅ | ✅ | ✅ | ✅ | Full CRUD support |
 | **Countries** | ❌ | ✅ | ❌ | ❌ | ✅ | Country code definitions |

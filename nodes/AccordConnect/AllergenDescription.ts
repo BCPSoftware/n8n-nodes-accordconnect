@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-// Generated from OpenAPI spec v430.002.0007 - 25/08/26 - do not edit by hand
+// Generated from OpenAPI spec v430.002.0008 - 26/08/26 - do not edit by hand
 
 export const allergensOperations: INodeProperties[] = [
     {
@@ -600,6 +600,24 @@ export const allergensListFields: INodeProperties[] = [
         }
     },
     {
+        displayName: 'Maximum Quantity',
+        name: 'maximumQuantity',
+        type: 'number',
+        default: '',
+        description: 'Maximum Purchase Quantity (=,EQ,&lt;&gt;,NE,&gt;,GT,&lt;,LT,&gt;=,GE,&lt;=,LE)',
+        typeOptions: {
+            minValue: 0
+        },
+        placeholder: '250',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:list'],
+                filterMode: ['common']
+            }
+        }
+    },
+    {
         displayName: 'Sort',
         name: 'sort',
         type: 'multiOptions',
@@ -812,6 +830,34 @@ export const allergensCreateFields: INodeProperties[] = [
         }
     },
     {
+        displayName: 'Allergen Name',
+        name: 'allergenName',
+        type: 'string',
+        default: '',
+        description: 'The allergen name value',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:create'],
+                createMode: ['simple']
+            }
+        }
+    },
+    {
+        displayName: 'Allergen Description',
+        name: 'allergenDescription',
+        type: 'string',
+        default: '',
+        description: 'The allergen description value',
+        displayOptions: {
+            show: {
+                resource: ['allergens'],
+                operation: ['allergens:create'],
+                createMode: ['simple']
+            }
+        }
+    },
+    {
         displayName: 'Allergen Qualifier',
         name: 'allergenQualifier',
         type: 'options',
@@ -859,34 +905,6 @@ export const allergensCreateFields: INodeProperties[] = [
         }
     },
     {
-        displayName: 'Allergen Name',
-        name: 'allergenName',
-        type: 'string',
-        default: '',
-        description: 'The allergen name value',
-        displayOptions: {
-            show: {
-                resource: ['allergens'],
-                operation: ['allergens:create'],
-                createMode: ['advanced']
-            }
-        }
-    },
-    {
-        displayName: 'Allergen Description',
-        name: 'allergenDescription',
-        type: 'string',
-        default: '',
-        description: 'The allergen description value',
-        displayOptions: {
-            show: {
-                resource: ['allergens'],
-                operation: ['allergens:create'],
-                createMode: ['advanced']
-            }
-        }
-    },
-    {
         displayName: 'Maximum Quantity',
         name: 'maximumQuantity',
         type: 'number',
@@ -899,7 +917,7 @@ export const allergensCreateFields: INodeProperties[] = [
             show: {
                 resource: ['allergens'],
                 operation: ['allergens:create'],
-                createMode: ['advanced']
+                createMode: ['simple']
             }
         }
     }

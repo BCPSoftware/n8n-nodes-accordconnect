@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-26
+
+### Fixed
+
+- **Update now works for Customers, Products and Orders.** The operation appeared in the dropdown but had no fields behind it, so it sent an empty request. This had been the case since well before 1.3.0.
+- **Create and Update now work for Allergens.** 1.3.0 offered both operations without wiring them up, and documented the resource as read-only. It supports Create, Read, Update and List.
+
+### Added
+
+- **Maximum Quantity** filter on the Allergen list, which 1.3.0 omitted.
+
+### Changed
+
+- Regenerated from Accord Connect spec v430.002.0008.
+
+### Internal
+
+- Tests covering operation wiring and the Include Lines toggle. Both classes of fault — an operation offered without fields, and a toggle that renders but is ignored — now fail the suite instead of shipping.
+
 ## [1.3.0] - 2026-08-25
 
 ### Added
@@ -82,7 +101,8 @@ First public release.
 - `includeLines` for purchase orders, claims, promotions and mix-and-match schemes, fetching line items in a single call.
 - Advanced, common and raw filter modes, field selection, and pagination.
 
-[unreleased]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.3.0...HEAD
+[unreleased]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/BCPSoftware/n8n-nodes-accordconnect/compare/v1.1.0...v1.1.1
